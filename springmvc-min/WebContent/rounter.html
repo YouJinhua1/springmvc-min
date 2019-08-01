@@ -1,0 +1,94 @@
+
+
+原生 js 实现一个简单的前端路由router，模拟 Vue 路由切换。
+
+前端：原生 js 实现一个简单的前端路由router，模拟Vue路由切换
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <meta name="author" content="">
+ <title>原生模拟 Vue 路由切换</title>
+ <style type="text/css">
+ .router_box,
+ #router-view {
+ max-width: 1000px;
+ margin: 50px auto;
+ padding: 0 20px;
+ }
+ .router_box>a {
+ padding: 0 10px;
+ color: green;
+ }
+ </style>
+</head>
+<body>
+ <div class="router_box">
+ <a href="/home" class="router">主页</a>
+ <a href="/news" class="router">新闻</a>
+ <a href="/team" class="router">团队</a>
+ <a href="/about" class="router">关于</a>
+ </div>
+ <div id="router-view"></div>
+ <script type="text/javascript">
+ function Vue(parameters) {
+ let vue = {};
+ vue.routes = parameters.routes || [];
+ vue.init = function() {
+ document.querySelectorAll(".router").forEach((item, index) => {
+ item.addEventListener("click", function(e) {
+ let event = e || window.event;
+ event.preventDefault();
+
+ window.location.hash = this.getAttribute("href");
+ }, false);
+ });
+ window.addEventListener("hashchange", () => {
+ vue.routerChange();
+ });
+ vue.routerChange(); // 开始先执行一次，避免router-view为空
+ };
+ vue.routerChange = () => {
+ let nowHash = window.location.hash; // 点击后的hasn值
+ console.log(nowHash)
+ let index = vue.routes.findIndex((item, index) => { // hash值位置
+ return nowHash == ('#' + item.path);
+ });
+ console.log(index)
+ if (index >= 0) {
+ document.querySelector("#router-view").innerHTML = vue.routes[index].component;
+ } else {
+ let defaultIndex = vue.routes.findIndex((item, index) => {
+ return item.path == '*';
+ });
+ console.log(defaultIndex) // 首次打开页面时，值为4，执行重定向，即默认路由
+ if (defaultIndex >= 0) {
+ window.location.hash = vue.routes[defaultIndex].redirect;
+ }
+ }
+ };
+ vue.init();
+ }
+ new Vue({
+ routes: [{
+ path: '/home',
+ component: "<h1>主页</h1><a href='#'>代码就是要多练，多敲，多思考，多看，多画流程图</a>"
+ }, {
+ path: '/news',
+ component: "<h1>新闻</h1><a href='#'>广州某车主被扣12分还逆行，竟然没有责任？问你服不服！</a>"
+ }, {
+ path: '/team',
+ component: '<h1>团队</h1><h4>单打独斗已经不行了，只有狼群才能战胜狮子</h4>'
+ }, {
+ path: '/about',
+ component: '<h1>关于</h1><h4>价值在于分享</h4><p>大家关心的信息流才能瞬间产生巨大的价值，但消退也快</p>'
+ }, {
+ path: '*',
+ redirect: '/home'
+ }]
+ });
+ </script>
+</body>
+</html>
