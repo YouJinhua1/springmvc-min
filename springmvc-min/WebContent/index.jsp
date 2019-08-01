@@ -1,3 +1,3 @@
 <%
-	response.sendRedirect("/test/hello");
+	response.sendRedirect("/test/hello1111");
 %>
